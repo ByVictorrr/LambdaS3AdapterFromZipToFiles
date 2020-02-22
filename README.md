@@ -1,2 +1,14 @@
 # LambdaS3AdapterFromZipToFiles
-A lambda function that is used when a set S3-PUT request is made in a specific S3 bucket. The file that is inserted is assumed to be a zip file containing images and jsons files. This function takes the zip file and decompresses the zip file into the inputted S3 bucket name. 
+A lambda that triggers off a zip file S3-PUT event. It takes the inserted zip file and decompresses it into a 
+constant variable(SRC_BUCKET). 
+
+This lambda function expects two folders at the root of the source S3 bucket: 
+1. images
+2. info
+
+## images folder
+This folder is where all the image files in the zip file are going to be extracted.
+
+## info folder
+This folder is where all the other files are stored.
+
