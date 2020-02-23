@@ -5,8 +5,10 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
@@ -45,21 +47,49 @@ public class S3Stream {
      * @param fileName extracted filename
      * @param contents contents of the filename
      */
-    public void writeFileToS3(String fileName, InputStream contents){
-            String folder = putFolder(fileName);
+    public void writeFileToS3(String fileName, long length,
+                              final InputStream contents,
+                              final InputStream man)
+    {
+            String folder, manufacture;
+            StringBuilder sb;
+            try {
+                if((folder = putFolder(fileName)).equals("info")) {
+                        manufacture=getManufacture(man)+"/";
+                        folder="";
+                }else{
+                    manufacture="";
+                    folder+="/";
+                }
+                sb=new StringBuilder(manufacture)
+                        .append(folder)
+                        .append(fileName);
 
-            this.client.putObject(
-                    new PutObjectRequest(this.bucketName,
-                            folder+"/"+fileName,
-                            contents,
-                            new ObjectMetadata()
+                ObjectMetadata md = new ObjectMetadata();
+                md.setContentLength(length);
+                this.client.putObject(
+                        new PutObjectRequest(this.bucketName,
+                                sb.toString(),
+                                contents,
+                                md
 
-                    )
-                    .withCannedAcl(CannedAccessControlList.Private)
-            );
+
+                        ).withCannedAcl(CannedAccessControlList.Private)
+                );
+                contents.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
     }
+    private String getManufacture(final InputStream is)
+            throws Exception
+    {
 
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> jsonMap = mapper.readValue(is, Map.class);
+        return jsonMap.get("manufacturer").toString();
+    }
     /**
      * Determines if a file name is an image of not
      * @param fileName name to be determined if its image like

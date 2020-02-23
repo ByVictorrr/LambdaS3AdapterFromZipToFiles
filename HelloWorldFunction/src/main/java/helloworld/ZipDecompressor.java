@@ -2,12 +2,16 @@
 package helloworld;
 
 import com.amazonaws.util.IOUtils;
+import helloworld.utilities.Pair;
 import org.apache.commons.io.FilenameUtils;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,7 +48,8 @@ public class ZipDecompressor {
             while ((ze = zipStream.getNextEntry()) != null) {
                 String zeName = FilenameUtils.getName(ze.getName());
                 if (!ze.isDirectory()) {
-                    s3Stream.writeFileToS3(zeName,convertZipInputStreamToInputStream(zipStream));
+                    Pair<InputStream,InputStream> is = convertZipInputStreamToInputStream(zipStream);
+                    s3Stream.writeFileToS3(zeName,ze.getSize(),is.getKey(),is.getValue());
                 }
             }
         }catch (Exception e){
@@ -55,16 +60,19 @@ public class ZipDecompressor {
     /**
      * Helper function for decompress look above
      * @param \in is the <code>ZipInputStream</code> object that stores data for each entry
-     * @return converted object
+     * @return converted object and the manufacture
      * @throws IOException
      */
-    private InputStream convertZipInputStreamToInputStream(final ZipInputStream in)
+    private Pair<InputStream,InputStream> convertZipInputStreamToInputStream(final ZipInputStream in)
             throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         IOUtils.copy(in, out);
-        InputStream is = new ByteArrayInputStream(out.toByteArray());
-        return is;
+        InputStream is1 = new ByteArrayInputStream(out.toByteArray());
+        InputStream is2 = new ByteArrayInputStream(out.toByteArray());
+
+        return new Pair<>(is1,is2);
     }
+
 
 
 }

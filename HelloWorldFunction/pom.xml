@@ -59,6 +59,16 @@
             <artifactId>xz</artifactId>
             <version>1.6</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>3.0.1</version>
+            <type>pom</type>
+        </dependency>
+
+
     </dependencies>
 
 
