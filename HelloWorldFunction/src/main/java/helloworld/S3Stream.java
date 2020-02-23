@@ -54,13 +54,16 @@ public class S3Stream {
     {
             String folder, manufacture;
             StringBuilder sb;
+            CannedAccessControlList acl;
             try {
                 if((folder = putFolder(fileName)).equals("info")) {
                         manufacture=getManufacture(man)+"/";
                         folder="";
+                        acl=CannedAccessControlList.Private;
                 }else{
                     manufacture="";
                     folder+="/";
+                    acl=CannedAccessControlList.PublicRead;
                 }
                 sb=new StringBuilder(manufacture)
                         .append(folder)
@@ -75,7 +78,7 @@ public class S3Stream {
                                 md
 
 
-                        ).withCannedAcl(CannedAccessControlList.Private)
+                        ).withCannedAcl(acl)
                 );
             }catch (Exception e){
                 e.printStackTrace();
