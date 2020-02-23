@@ -67,6 +67,12 @@
             <version>3.0.1</version>
             <type>pom</type>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sns -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+            <version>1.11.728</version>
+        </dependency>
 
 
     </dependencies>

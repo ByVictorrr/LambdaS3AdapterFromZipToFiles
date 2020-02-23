@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ public class S3Stream {
         public ZipInputStream getZipStream(String zipFileName) {
             S3Object object = client.getObject(bucketName, zipFileName);
             InputStream contents = object.getObjectContent();
-            return new ZipInputStream(contents);
+            return new ZipInputStream(contents, Charset.forName("Cp437"));
         }
 
     /**
@@ -76,7 +77,6 @@ public class S3Stream {
 
                         ).withCannedAcl(CannedAccessControlList.Private)
                 );
-                contents.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
